@@ -83,8 +83,14 @@ func (lru *LRU) String() string {
 }
 
 func main() {
-	l := New()
-	_, ok := l.Get(&Bucket{123})
-	print(ok)
-	return
+	lru := New()
+	var buckets []*Bucket
+	for i := 1; i <= 12; i++ {
+		newBucket := &Bucket{Value: i}
+		buckets = append(buckets, newBucket)
+		lru.Put(newBucket)
+	}
+	lru.Get(buckets[2])   //检索bucket，bucket[2]会被标记为最近使用的bucket（放置到双向链表的链表头）
+	lru.Put(&Bucket{Value: "newBucket"})   //插入新bucket，由于list已满，list末尾元素会被删除
+	fmt.Print(lru)    //打印结果
 }
